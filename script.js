@@ -1,12 +1,24 @@
 const form = document.getElementById("feedback-form");
 const errorBox = document.getElementById("error-box");
+const welcomeBox = document.getElementById("welcome-box");
+const successBox = document.getElementById("success-box");
+const nameInput = document.getElementById("reviewer-name");
+
+const savedName = localStorage.getItem("reviewerName");
+
+if (savedName) {
+    welcomeBox.textContent =
+        'Welcome back, ${savedName}! Ready to submit another wonderful review?';
+    nameInput.value = savedName;
+}
 
 form.addEventListener("submit", function(event) {
     event.preventDefault();
 
     errorBox.innerHTML = "";
+    successBox.textContent = "";
 
-    const name = document.getElementById("reviewer-name").value.trim();
+    const name = nameInput.value.trim();
     const rating = document.getElementById("rating").value;
     const comments = document.getElementById("comments").value;
 
@@ -28,10 +40,16 @@ form.addEventListener("submit", function(event) {
         errorBox.innerHTML = errors
             .map(error => <p>${error}</p>)
             .join("");
-
         errorBox.style.color = "red";
         return;
     }
 
-    console.log("Feedback passed validation!");
+    localStorage.setItem("reviewerName", name);
+
+    successBox.textContent =
+        'Thank you, ${name}! Your glowing review has been recorded.';
+
+    welcomeBox.textContent = "";
+    form.reset();
+    nameInput.value = name;
 });
